@@ -7,7 +7,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
-const encrypt = require("mongoose-encryption");
+//const encrypt = require("mongoose-encryption"); //Encripta con AES
+
+const md5=require("md5");
+const myEncryption=process.env.MY_SECRET; //Variables de entorno (o configuración) gracias a dotenv
+const host=process.env.DB_HOST;
+const db=process.env.DB;
 
 const app = express();
 
@@ -17,7 +22,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-mongoose.connect('mongodb://localhost:27017/userDB', {
+
+mongoose.connect('mongodb://'+host+'/'+db, {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
@@ -33,8 +39,8 @@ const userSchema= new mongoose.Schema({
   }
 });
 
-//Encriptacion del Schema con Mongoose-Encryption y Dotenv
-userSchema.plugin(encrypt,{secret:process.env.MY_SECRET, encryptedFields:["password"]});
+// //Encriptacion del Schema con Mongoose-Encryption y Dotenv
+// userSchema.plugin(encrypt,{secret: myEncryption, encryptedFields:["password"]});
 
 
 const User= new mongoose.model("user",userSchema);
@@ -55,7 +61,7 @@ app.post("/login",function(req,res){
           console.log("Error: "+e);
     }else{
       if(user){
-        if(user.password===req.body.password){
+        if(user.password===md5(req.body.password)){
           res.render("secrets.ejs");
         }
       }
@@ -70,7 +76,7 @@ app.get("/register",function(req,res){
 app.post("/register",function(req,res){
   const newUser= new User({
     email:req.body.username,
-    password: req.body.password
+    password: md5(req.body.password)
   });
   newUser.save(function(e){
     if(!e){
