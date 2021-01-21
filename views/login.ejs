@@ -8,7 +8,7 @@
       <div class="card">
         <div class="card-body">
 
-          <!-- Makes POST request to /login route -->
+          <!-- Login manual -->
           <form action="/login" method="POST">
             <% if (errorStatus){%>
               <%validClass="is-invalid";%>
@@ -23,7 +23,7 @@
               <label for="password">Contraseña</label>
               <input type="password" class="form-control pass <%=validClass%>" name="password" oninput="$('.pass').removeClass('is-invalid');">
               <div class="invalid-feedback">
-                El usuario o contraseña son incorrectos
+                <%=errorText%>
               </div>
             </div>
             <button type="submit" class="btn btn-dark">Login</button>
@@ -34,18 +34,29 @@
       </div>
     </div>
 
-    <!-- <div class="col-sm-4">
-      <div class="card">
+<!-- Login con redes sociales -->
+    <div class="col-sm-4">
+      <div class="card social-block">
         <div class="card-body">
-          <a class="btn btn-block" href="/auth/google" role="button">
+          <a class="btn btn-block btn-social btn-google" href="/auth/google" role="button">
             <i class="fab fa-google"></i>
-            Sign In with Google
+            Login con Google
+          </a>
+        </div>
+        <div class="card-body">
+          <a class="btn btn-block btn-social btn-facebook" href="/auth/facebook" role="button">
+            <i class="fab fa-facebook"></i>
+            Login con Facebook
+          </a>
+        </div>
+        <div class="card-body">
+          <a class="btn btn-block btn-social btn-twitter" href="/auth/twitter" role="button">
+            <i class="fab fa-twitter"></i>
+            Login con Twitter
           </a>
         </div>
       </div>
-    </div> -->
+    </div>
 
   </div>
 </div>
-
-<%- include('partials/footer') %>

@@ -1,11 +1,43 @@
-
 body {
   background-color: #E8ECEF;
 }
 
+.imgProfile-small {
+  width: 20px;
+  border-radius: 20px;
+}
+
+.imgProfile {
+  padding: 20px 0;
+  width: 150px;
+}
+
+a:hover {
+  color: #7d7f7d;
+  text-decoration: none;
+}
+
+.deleteSecretIcon {
+  margin-bottom: 2px;
+  color: #D03F2B;
+}
+
+.buttonHomeLink {
+  display: inline-block;
+  color: #000;
+  text-decoration: none;
+}
+
+.buttonHome {
+  width: 400px;
+  padding: 30px;
+  border-radius: 30px;
+  background-color: #fff;
+}
+
 .centered {
-    padding-top: 200px;
-    text-align: center;
+  padding-top: 150px;
+  text-align: center;
 }
 
 .secret-text {
@@ -13,4 +45,15 @@ body {
   font-size: 2rem;
   color: #fff;
   background-color: #000;
+}
+
+.secret-text2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #000;
+  background-color: #7d7f7d;
+}
+
+.nav-item {
+  text-align: right;
 }
