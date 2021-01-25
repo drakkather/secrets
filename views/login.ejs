@@ -1,4 +1,4 @@
-<%- include('partials/header') %>
+<%- include("partials/header") %>
 
 <div class="container mt-5">
   <h1>Login</h1>
@@ -10,20 +10,20 @@
 
           <!-- Login manual -->
           <form action="/login" method="POST">
-            <% if (errorStatus){%>
-              <%validClass="is-invalid";%>
-            <%}else{%>
-              <%validClass="";%>
-              <%}%>
+            <% if (errorStatus){ %>
+              <% validClass="is-invalid"; %>
+            <% } else { %>
+              <% validClass=""; %>
+              <% } %>
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" class="form-control email <%=validClass%>" name="username" oninput="$('.email').removeClass('is-invalid');">
+              <input type="email" class="form-control email <%= validClass %>" name="username" oninput="$(".email").removeClass("is-invalid");">
             </div>
             <div class="form-group">
               <label for="password">Contraseña</label>
-              <input type="password" class="form-control pass <%=validClass%>" name="password" oninput="$('.pass').removeClass('is-invalid');">
+              <input type="password" class="form-control pass <%= validClass %>" name="password" oninput="$(".pass").removeClass("is-invalid");">
               <div class="invalid-feedback">
-                <%=errorText%>
+                <%= errorText %>
               </div>
             </div>
             <button type="submit" class="btn btn-dark">Login</button>
