@@ -1,26 +1,24 @@
 // jshint esversion:6
 
-require("dotenv").config(); // Con dotenv conseguimos que todo lo que hay dentro del archivo .env este oculto y encriptado para poder usar variables de entorno
-// Si queremos subir a Github deberiamos crear un .gitginore como el que yo he creado (https://github.com/github/gitignore)
+require("dotenv").config();
 const port = process.env.PORT || 3000;
       root = __dirname;
       express = require("express");
       bodyParser = require("body-parser");
       ejs = require("ejs");
       mongoose = require("mongoose");
-      session = require("express-session"); // Para poder usar variables de sesion
-      fileUpload = require("express-fileupload"); // Para poder cambiar la foto de perfil
-      arrayShuffle = require("array-shuffle"); // Para desordenar un array aleatoriamente
+      session = require("express-session");
+      fileUpload = require("express-fileupload");
+      arrayShuffle = require("array-shuffle");
       server = "local"; //Si establezco el string en "local" funciona en localhost, si no en Heroku
-var {nanoid} = require("nanoid"); // Para generar cadenas aleatorias (se requiere de otra forma)
+var {nanoid} = require("nanoid");
 
 // Mis modulos
 const passportConfig = require(root + "/js/passportConfig.js");
       fn = require(root + "/js/functions.js");
       schemaFn = require(root + "/js/schema.js");
 
-// Variables de entorno (o configuración) gracias a dotenv
-// Las variables de entorno hay que configurarlas en Heroku si vamos a subir la app
+// Variables de entorno
 const myEncryption = process.env.MY_SECRET;
       host = process.env.DB_HOST;
       db = process.env.DB;
@@ -28,11 +26,8 @@ const myEncryption = process.env.MY_SECRET;
       dbPassAtlas=process.env.DB_PASS_ATLAS;
       dbClusterAtlas=process.env.DB_CLUSTER_ATLAS;
 
-// Iniciamos la app con express
+
 const app = express();
-
-
-// // A PARTIR DE AQUI ES MUY IMPORTANTE EL ORDEN EN EL QUE OCURREN LAS CONFIGURACIONES DE CADA PAQUETE
 
 
     // // // // // // // // // // // // // // // // // // /
@@ -45,7 +40,7 @@ app.set("view engine", "ejs"); // Para usar las vistas (o plantillas) de documen
 app.use(bodyParser.urlencoded({ // Para usar bodyParser y poder recoger variables de formulario con req.body
   extended: true
 }));
-// Inicializamos session para poder usar req.session
+
 app.use(session({
   secret: myEncryption,
   resave: false,
@@ -69,11 +64,10 @@ if(server==="local"){
   });
 }
 
-mongoose.set("useCreateIndex", true); // Con esto quitamos un deprecation que sale con passportLocalMongoose
+mongoose.set("useCreateIndex", true);
 
 
 // Llamo a la funcion de schema.js para crear el schema y el modelo User y tambien el modelo Secret
-// Hago un return en forma de array en la funcion y los recojo como array, aunque ya como valores separados
 const [User, Secret] = schemaFn.createSchemas(mongoose);
 
 
@@ -88,10 +82,11 @@ validConfig = fn.passwordValidator();
     // RUTAS//
     // // // // /
 
+
 // HOME
 
 app.get("/", function(req, res) {
-  res.render("home.ejs"); // Podemos indicar la extension o no
+  res.render("home.ejs");
 });
 
 
@@ -113,7 +108,7 @@ app.get("/auth/google",
     scope: ["profile"]
   }));
 
-app.get("/auth/google/secrets", // Esta ruta la hemos establecido tambien en las credenciales de Google
+app.get("/auth/google/secrets",
   passport.authenticate("google", {
     failureRedirect: "/login "
   }),
@@ -205,7 +200,7 @@ app.route("/login")
             }
           });
         } else {
-          req.session.errorLog = true; // mandamos una variable de sesion a true para recoger que hay un error en el log
+          req.session.errorLog = true;
           req.session.errorLogText = "Contraseña incorrecta";
           res.redirect("/login");
         }
@@ -218,7 +213,6 @@ app.route("/login")
 // LOGOUT
 
 app.get("/logout", function(req, res) {
-  // Realmente la autenticación no seria necesaria ya que redirigimos siempre, pero controlamos que no surja algún error
   if (req.isAuthenticated()) {
     req.logout();
   }
@@ -261,14 +255,12 @@ app.route("/register")
 })
 // Busco que el usuario no exista en la BD y compruebo que el email sea valido, si es asi, registro el usuario con passport
 .post(function(req, res) {
-  // Con passportLocalMongoose
   User.findOne({
     username: req.body.username
   }, function(e, foundUser) {
     if (foundUser === null) {
       // Compruebo que el password sea valido (número de caracteres, mayusculas, simbolos, etc) segun la configuración de passwordValidator
       if (validConfig.validate(req.body.password)) {
-        // Register es una funcion de passport
         User.register({
           username: req.body.username
         }, req.body.password, function(err, user) {
@@ -295,7 +287,7 @@ app.route("/register")
 // PAGINA DE SECRETOS
 
 app.get("/secrets", function(req, res) {
-  // Si el usuario está logueado busco todos los secretos  que no sean iguales ($ne, not equal) a null, los desordeno con array-shuffle y los envio por render
+  // Si el usuario está logueado busco todos los secretos, los desordeno con array-shuffle y los envio
   if (req.isAuthenticated()) {
     Secret.find({
       secret: {
@@ -366,11 +358,11 @@ app.post("/updateAccount", function(req, res) {
   if (req.isAuthenticated()) {
     if (req.files !== null) {
       fn.removeOldFile(req); // Elimino la imagen anterior con mi funcion
-      imgFile = req.files.imageFile; // Guardo el nombre del archivo
-      ext = imgFile.name.slice(-4);// Recojo la extension del archivo
+      imgFile = req.files.imageFile;
+      ext = imgFile.name.slice(-4);
       const rndString = nanoid(10); // Genera una cadena de 10 caracteres con Nanoid
       uploadPath = root + "/public/img/" + rndString + ext;
-      // Uso el metodo mv del paquete express-fileUpload para copiar la imagen a mi directorio
+      // Copia la imagen a mi directorio
       imgFile.mv(uploadPath, function(err) {
         if (err) {
           return res.status(500).send(err);
@@ -380,7 +372,7 @@ app.post("/updateAccount", function(req, res) {
           User.updateOne({
               _id: req.user._id
             }, {
-              $set: req.body, // Con este parametro consigo que el resto de datos se conserven al actualizar
+              $set: req.body,
               name: req.body.userNameInput,
               photo: uploadPath
             },
@@ -396,7 +388,7 @@ app.post("/updateAccount", function(req, res) {
       User.updateOne({
           _id: req.user._id
         }, {
-          $set: req.body, // Con este parametro consigo que el resto de datos se conserven al actualizar
+          $set: req.body,
           name: req.body.userNameInput,
         },
         function(e) {
@@ -414,6 +406,9 @@ app.post("/updateAccount", function(req, res) {
 // ESCUCHA DEL PUERTO
 
 app.listen(port, function() {
-  // console.log("Corriendo en el cluster de MongoDB Atlas");
-  console.log("Corriendo en el puerto " + port);
+  if(server==="local"){
+    console.log("Corriendo en el puerto " + port);
+  }else{
+    console.log("Corriendo en el cluster de MongoDB Atlas");
+  }
 });

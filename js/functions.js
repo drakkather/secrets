@@ -1,21 +1,19 @@
 // jshint esversion:6
-const passwordValidator = require("password-validator"); // Para validar los caracteres insertados en el password de registro
-      fs = require("fs"); // Para poder trabajar con archivos en node
-      path = require("path"); // Para poder trabajar con rutas
-      root = path.join(__dirname, "../"); // Vuelvo un directorio atrás para que coja bien la ruta ya que estas funciones están en una carpeta superior
+const passwordValidator = require("password-validator");
+      fs = require("fs");
+      path = require("path");
+      root = path.join(__dirname, "../");
 
 exports.passwordValidator = function() {
-  //  Creamos la configuracion del validador de password
   const validConfig = new passwordValidator();
-  //  Añado las propiedades
   validConfig
-    .is().min(8) // Minimo 8 caracteres
-    .is().max(20) // Maximo 20 caracteres
-    .has().uppercase() // Debe tener letras mayusculas
-    .has().lowercase() // Debe tener letras minusculas
-    .has().digits() // Debe tener números
-    .has().not().spaces() // No debe tener espacios
-    .is().not().oneOf(["Passw0rd", "Password123", "1234"]); // No se permiten estas contraseñas
+    .is().min(8)
+    .is().max(20)
+    .has().uppercase()
+    .has().lowercase()
+    .has().digits()
+    .has().not().spaces()
+    .is().not().oneOf(["Passw0rd", "Password123", "1234"]);
   return validConfig;
 };
 
@@ -27,7 +25,7 @@ exports.removeOldFile = function(req) {
     if (photoProfile.slice(0, 4) === "/img") {
       const pathImg = root + "public" + photoProfile;
       try {
-        fs.unlinkSync(pathImg); // Elimino el archivo de imagen anterior para que no ocupe espacio con el paquete fs
+        fs.unlinkSync(pathImg); // Elimino el archivo de imagen anterior para que no ocupe espacio
       } catch (err) {
         console.error(err);
       }
@@ -50,7 +48,6 @@ exports.configureServer= function(server){
   }else{
     serverData={
       urlServer:"https://secret-bastion-70637.herokuapp.com",
-      // Todas las variables de entorno hay que insertarlas en Heroku para que puedan funcionar en el servidor externo
       client_ID_Google : process.env.GOOGLE_CLIENT_ID_HEROKU,
       client_Secret_Google : process.env.GOOGLE_CLIENT_SECRET_HEROKU,
       client_ID_Facebook : process.env.FACEBOOK_APP_ID_HEROKU,
