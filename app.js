@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
       session = require("express-session"); // Para poder usar variables de sesion
       fileUpload = require("express-fileupload"); // Para poder cambiar la foto de perfil
       arrayShuffle = require("array-shuffle"); // Para desordenar un array aleatoriamente
-      server = "heroku"; //Si establezco el string en "local" funciona en localhost, si no en Heroku
+      server = "local"; //Si establezco el string en "local" funciona en localhost, si no en Heroku
 var {nanoid} = require("nanoid"); // Para generar cadenas aleatorias (se requiere de otra forma)
 
 // Mis modulos
